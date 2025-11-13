@@ -57,6 +57,11 @@ watchlist:
     - V      # Visa
     - MA     # Mastercard
     
+  my_picks:  # Add your own category
+    - META
+    - GOOGL
+    - NVDA
+    
   healthcare:
     - JNJ    # Johnson & Johnson
     - PFE    # Pfizer
