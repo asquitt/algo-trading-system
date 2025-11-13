@@ -1,0 +1,115 @@
+# Data source configurations for the trading system
+
+data_sources:
+  yfinance:
+    enabled: true
+    rate_limit: 2000  # requests per hour
+    supported_intervals:
+      - 1m
+      - 5m
+      - 15m
+      - 30m
+      - 1h
+      - 1d
+      - 1wk
+    supported_periods:
+      - 1d
+      - 5d
+      - 1mo
+      - 3mo
+      - 6mo
+      - 1y
+      - 2y
+      - 5y
+      - max
+    
+  alpha_vantage:
+    enabled: true
+    rate_limit: 500  # requests per day (free tier)
+    rate_limit_interval: 86400  # seconds (1 day)
+    base_url: "https://www.alphavantage.co/query"
+    supported_functions:
+      - TIME_SERIES_INTRADAY
+      - TIME_SERIES_DAILY
+      - GLOBAL_QUOTE
+    
+  polygon:
+    enabled: false  # Enable when you get API key
+    rate_limit: 5  # requests per minute (free tier)
+    rate_limit_interval: 60  # seconds
+    base_url: "https://api.polygon.io"
+
+# Symbols to track - organized by sector
+watchlist:
+  tech:
+    - AAPL   # Apple
+    - MSFT   # Microsoft
+    - GOOGL  # Google
+    - AMZN   # Amazon
+    - NVDA   # NVIDIA
+    - META   # Meta
+    - TSLA   # Tesla
+  
+  finance:
+    - JPM    # JP Morgan
+    - BAC    # Bank of America
+    - GS     # Goldman Sachs
+    - V      # Visa
+    - MA     # Mastercard
+    
+  healthcare:
+    - JNJ    # Johnson & Johnson
+    - PFE    # Pfizer
+    - UNH    # UnitedHealth
+    
+  energy:
+    - XOM    # Exxon Mobil
+    - CVX    # Chevron
+    
+  crypto:
+    - BTC-USD  # Bitcoin
+    - ETH-USD  # Ethereum
+
+# Data collection settings
+collection:
+  historical_period: "1mo"
+  interval: "1h"
+  update_frequency: 300  # seconds (5 minutes)
+  batch_size: 5  # number of symbols to fetch at once
+  
+  # Data quality settings
+  min_volume: 100000  # minimum daily volume
+  require_complete_bars: true
+  
+  # Storage settings
+  compress_data: true
+  retention_days: 365
+
+# Market hours (Eastern Time)
+market_hours:
+  regular:
+    open: "09:30"
+    close: "16:00"
+  pre_market:
+    open: "04:00"
+    close: "09:30"
+  after_hours:
+    open: "16:00"
+    close: "20:00"
+  timezone: "America/New_York"
+
+# Feature engineering configuration
+features:
+  technical_indicators:
+    - RSI
+    - MACD
+    - Bollinger_Bands
+    - SMA
+    - EMA
+    - ATR
+    - OBV
+  
+  lookback_periods:
+    short: 14
+    medium: 50
+    long: 200

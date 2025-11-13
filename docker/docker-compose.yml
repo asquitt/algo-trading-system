@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with TimescaleDB extension (free, powerful time-series DB)
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: trading_timescaledb
+    environment:
+      POSTGRES_DB: trading_data
+      POSTGRES_USER: trader
+      POSTGRES_PASSWORD: trading123
+    ports:
+      - "5433:5432"  # Using 5433 to avoid conflicts with other PostgreSQL
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    command: postgres -c shared_preload_libraries=timescaledb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trader -d trading_data"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for streaming and caching (replaces Kafka for now)
+  redis:
+    image: redis:7-alpine
+    container_name: trading_redis
+    ports:
+      - "6380:6379"  # Using 6380 to avoid conflict with RAG Redis
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Grafana for monitoring (we'll set this up later)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: trading_grafana
+    ports:
+      - "3001:3000"  # Using 3001 in case you have other Grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+
+volumes:
+  timescale_data:
+  redis_data:
+  grafana_data:
